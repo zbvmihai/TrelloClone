@@ -34,6 +34,7 @@ open class BaseActivity : AppCompatActivity() {
         tvProgressText.text = text
         mProgressDialog.show()
     }
+
     fun hideProgressDialog(){
         mProgressDialog.dismiss()
     }

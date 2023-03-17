@@ -31,7 +31,13 @@ class FirestoreClass {
         }
     }
 
-    private fun getCurrentUserId():String{
-        return FirebaseAuth.getInstance().currentUser!!.uid
+    fun getCurrentUserId():String{
+
+        var currentUser = FirebaseAuth.getInstance().currentUser
+        var currentUserID = ""
+        if (currentUser!= null){
+            currentUserID = currentUser.uid
+        }
+        return currentUserID
     }
 }

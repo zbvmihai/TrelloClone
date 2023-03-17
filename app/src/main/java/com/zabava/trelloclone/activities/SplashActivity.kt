@@ -8,6 +8,7 @@ import android.os.Handler
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.zabava.trelloclone.databinding.ActivitySplashBinding
+import com.zabava.trelloclone.firebase.FirestoreClass
 
 @Suppress("DEPRECATION")
 @SuppressLint("CustomSplashScreen")
@@ -27,7 +28,14 @@ class SplashActivity : AppCompatActivity() {
         binding?.tvSplashTitle?.typeface = typeFace
 
         Handler().postDelayed({
-            startActivity(Intent(this, IntroActivity::class.java))
+
+            val currentUserID = FirestoreClass().getCurrentUserId()
+
+            if (currentUserID.isNotEmpty()){
+                startActivity(Intent(this,MainActivity::class.java))
+            }else{
+                startActivity(Intent(this,IntroActivity::class.java))
+            }
             finish()
         },2500)
 
