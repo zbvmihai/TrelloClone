@@ -1,5 +1,6 @@
 package com.zabava.trelloclone.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.WindowManager
@@ -8,6 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.databinding.ActivitySignUpBinding
+import com.zabava.trelloclone.firebase.FirestoreClass
+import com.zabava.trelloclone.models.User
 
 @Suppress("DEPRECATION")
 class SignUpActivity : BaseActivity() {
@@ -36,6 +39,7 @@ class SignUpActivity : BaseActivity() {
         binding?.toolbarSignUpActivity?.setNavigationOnClickListener { onBackPressed() }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun registerUser(){
         val name: String = binding?.etNameSignup?.text.toString().trim{it <= ' '}
         val email: String = binding?.etEmailSignup?.text.toString().trim{it <= ' '}
@@ -45,20 +49,20 @@ class SignUpActivity : BaseActivity() {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                     task ->
-                hideProgressDialog()
                 if (task.isSuccessful) {
+                    hideProgressDialog()
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     val registeredEmail = firebaseUser.email!!
-                    Toast.makeText(
-                        this,
-                        "$name successfully registered with $registeredEmail",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    FirebaseAuth.getInstance().signOut()
+
+                    val user = User(
+                        firebaseUser.uid, name, registeredEmail
+                    )
+                    FirestoreClass().registerUser(this,user)
                     finish()
                 } else {
+                    hideProgressDialog()
                     Toast.makeText(
-                        this, task.exception!!.message,
+                        this, "Registration failed",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -85,5 +89,15 @@ class SignUpActivity : BaseActivity() {
             }
 
         }
+    }
+
+    fun userRegisteredSuccess(){
+        hideProgressDialog()
+        Toast.makeText(
+            this, "You have successfully registered!",
+            Toast.LENGTH_SHORT
+        ).show()
+        FirebaseAuth.getInstance().signOut()
+        finish()
     }
 }
