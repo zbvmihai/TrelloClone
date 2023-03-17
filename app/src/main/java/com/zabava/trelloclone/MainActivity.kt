@@ -1,6 +1,9 @@
 package com.zabava.trelloclone
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.zabava.trelloclone.databinding.ActivityMainBinding
 
@@ -12,6 +15,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        
+
     }
 }
