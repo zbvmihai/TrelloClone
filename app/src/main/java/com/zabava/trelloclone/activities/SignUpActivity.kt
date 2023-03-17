@@ -37,9 +37,9 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun registerUser(){
-        val name: String = binding?.etName?.text.toString().trim{it <= ' '}
-        val email: String = binding?.etEmail?.text.toString().trim{it <= ' '}
-        val password: String = binding?.etPassword?.text.toString().trim{it <= ' '}
+        val name: String = binding?.etNameSignup?.text.toString().trim{it <= ' '}
+        val email: String = binding?.etEmailSignup?.text.toString().trim{it <= ' '}
+        val password: String = binding?.etPasswordSignup?.text.toString().trim{it <= ' '}
 
         if (validateForm(name,email,password)){
             showProgressDialog(resources.getString(R.string.please_wait))
