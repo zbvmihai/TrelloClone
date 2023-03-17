@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrelloClone</string>
+    <string name="trello_clone">TrelloClone</string>
 </resources>
