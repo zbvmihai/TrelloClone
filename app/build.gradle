@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -38,6 +39,9 @@ android {
 
 dependencies {
 
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.4'
+    implementation 'com.google.gms:google-services:4.3.15'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
