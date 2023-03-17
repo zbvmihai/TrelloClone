@@ -1,4 +1,4 @@
-package com.zabava.trelloclone
+package com.zabava.trelloclone.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +7,7 @@ import android.view.WindowManager
 import com.zabava.trelloclone.databinding.ActivityIntroBinding
 
 @Suppress("DEPRECATION")
-class IntroActivity : AppCompatActivity() {
+class IntroActivity : BaseActivity() {
     private var binding: ActivityIntroBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityIntroBinding.inflate(layoutInflater)
@@ -20,10 +20,10 @@ class IntroActivity : AppCompatActivity() {
         )
 
         binding?.btnSignUpIntro?.setOnClickListener {
-            startActivity(Intent(this,SignUpActivity::class.java))
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
         binding?.btnSignInIntro?.setOnClickListener {
-            startActivity(Intent(this,SignInActivity::class.java))
+            startActivity(Intent(this, SignInActivity::class.java))
         }
     }
 

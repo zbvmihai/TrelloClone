@@ -1,4 +1,4 @@
-package com.zabava.trelloclone
+package com.zabava.trelloclone.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
