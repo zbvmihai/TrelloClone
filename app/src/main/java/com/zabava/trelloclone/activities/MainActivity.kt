@@ -35,6 +35,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         FirestoreClass().loadUserData(this)
 
+        binding?.includeBar?.fabCreateBoard?.setOnClickListener {
+            startActivity(Intent(this, CreateBoardActivity::class.java))
+        }
+
     }
 
     fun updateNavigationUserDetails(user: User) {
@@ -74,6 +78,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
