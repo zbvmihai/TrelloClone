@@ -33,7 +33,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     fun updateNavigationUserDetails(user: User) {
 
-        val ivUserProfile = findViewById<ImageView>(R.id.iv_user_image)
+        val ivUserProfile = findViewById<ImageView>(R.id.iv_user_profile_image)
         Glide
             .with(this)
             .load(user.image)
