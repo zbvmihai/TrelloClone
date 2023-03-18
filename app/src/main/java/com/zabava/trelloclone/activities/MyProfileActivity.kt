@@ -69,9 +69,9 @@ class MyProfileActivity : BaseActivity() {
         }
 
         binding?.btnUpdate?.setOnClickListener {
-            if(mSelectedImageFileURI != null){
+            if (mSelectedImageFileURI != null) {
                 uploadUserImage()
-            }else{
+            } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
@@ -154,48 +154,49 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    private fun updateUserProfileData(){
+    private fun updateUserProfileData() {
         val userHashMap = HashMap<String, Any>()
 
         var anyChangesMade = false
 
         if (mProfileImageURL.isNotEmpty()
-            && mProfileImageURL != mUserDetails.image){
+            && mProfileImageURL != mUserDetails.image
+        ) {
             userHashMap[Constants.IMAGE] = mProfileImageURL
             anyChangesMade = true
         }
 
-        if (binding?.etName?.text.toString() != mUserDetails.name){
+        if (binding?.etName?.text.toString() != mUserDetails.name) {
             userHashMap[Constants.NAME] = binding?.etName?.text.toString()
             anyChangesMade = true
         }
-        if (binding?.etMobile?.text.toString() != mUserDetails.mobile.toString()){
+        if (binding?.etMobile?.text.toString() != mUserDetails.mobile.toString()) {
             userHashMap[Constants.MOBILE] = binding?.etMobile?.text.toString().toLong()
             anyChangesMade = true
         }
-        if (anyChangesMade){
-            FirestoreClass().updateUserProfileData(this,userHashMap)
+        if (anyChangesMade) {
+            FirestoreClass().updateUserProfileData(this, userHashMap)
         }
     }
 
-    private fun uploadUserImage(){
+    private fun uploadUserImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
 
-        if (mSelectedImageFileURI !=  null){
+        if (mSelectedImageFileURI != null) {
 
-            val sRef : StorageReference =
-                FirebaseStorage.getInstance().reference.child("USER_IMAGE"
-                        + System.currentTimeMillis()+ "."
-                        + getFileExtension(mSelectedImageFileURI!!))
+            val sRef: StorageReference =
+                FirebaseStorage.getInstance().reference.child(
+                    "USER_IMAGE"
+                            + System.currentTimeMillis() + "."
+                            + getFileExtension(mSelectedImageFileURI!!)
+                )
 
-            sRef.putFile(mSelectedImageFileURI!!).addOnSuccessListener {
-                taskSnapshot ->
+            sRef.putFile(mSelectedImageFileURI!!).addOnSuccessListener { taskSnapshot ->
                 Log.i(
                     "Firebase Image URL", taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
                 )
 
-                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener {
-                    uri ->
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
                     Log.i(
                         "Downloadable Image URL", uri.toString()
                     )
@@ -204,11 +205,12 @@ class MyProfileActivity : BaseActivity() {
                     updateUserProfileData()
                 }
 
-            }.addOnFailureListener{
-                exception ->
-                Toast.makeText(this@MyProfileActivity,
+            }.addOnFailureListener { exception ->
+                Toast.makeText(
+                    this@MyProfileActivity,
                     exception.message,
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT
+                )
                     .show()
 
                 hideProgressDialog()
@@ -217,12 +219,12 @@ class MyProfileActivity : BaseActivity() {
     }
 
     private fun getFileExtension(uri: Uri): String? {
-        return MimeTypeMap.getSingleton().
-        getExtensionFromMimeType(contentResolver.getType(uri))
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri))
     }
 
-    fun profileUpdateSuccess(){
+    fun profileUpdateSuccess() {
         hideProgressDialog()
+        setResult(Activity.RESULT_OK)
         finish()
     }
 }
