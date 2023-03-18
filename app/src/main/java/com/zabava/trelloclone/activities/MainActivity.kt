@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
@@ -28,11 +27,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().signInUser(this)
+        FirestoreClass().loadUserData(this)
 
     }
 
-    fun updateNavigationUserDetails(user: User){
+    fun updateNavigationUserDetails(user: User) {
 
         val ivUserProfile = findViewById<ImageView>(R.id.iv_user_image)
         Glide
@@ -47,14 +46,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     }
 
-    private fun setupActionBar(){
+    private fun setupActionBar() {
         setSupportActionBar(binding?.includeBar?.toolbarMainActivity)
         binding?.includeBar?.toolbarMainActivity?.setNavigationIcon(R.drawable.ic_action_navigation_menu)
         binding?.includeBar?.toolbarMainActivity?.setNavigationOnClickListener {
 
-            if (binding?.drawerLayout?.isDrawerOpen(GravityCompat.START)!!){
+            if (binding?.drawerLayout?.isDrawerOpen(GravityCompat.START)!!) {
                 binding?.drawerLayout?.closeDrawer(GravityCompat.START)
-            }else{
+            } else {
                 binding?.drawerLayout?.openDrawer(GravityCompat.START)
             }
         }
@@ -62,15 +61,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (binding?.drawerLayout?.isDrawerOpen(GravityCompat.START)!!){
+        if (binding?.drawerLayout?.isDrawerOpen(GravityCompat.START)!!) {
             binding?.drawerLayout?.closeDrawer(GravityCompat.START)
-        }else{
+        } else {
             doubleBackToExit()
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_my_profile -> {
                 startActivity(Intent(this, MyProfileActivity::class.java))
             }

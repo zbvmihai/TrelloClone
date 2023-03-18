@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.zabava.trelloclone.activities.MainActivity
+import com.zabava.trelloclone.activities.MyProfileActivity
 import com.zabava.trelloclone.activities.SignInActivity
 import com.zabava.trelloclone.activities.SignUpActivity
 import com.zabava.trelloclone.models.User
@@ -19,18 +20,15 @@ class FirestoreClass {
 
     fun registerUser(activity: SignUpActivity, userInfo: User) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).set(
-            userInfo,
-            SetOptions.merge()
+            userInfo, SetOptions.merge()
         ).addOnSuccessListener {
             activity.userRegisteredSuccess()
         }
     }
 
     @SuppressLint("SuspiciousIndentation")
-    fun signInUser(activity: Activity) {
-        mFireStore.collection(Constants.USERS)
-            .document(getCurrentUserId())
-            .get()
+    fun loadUserData(activity: Activity) {
+        mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get()
             .addOnSuccessListener { document ->
                 val loggedInUser = document.toObject(User::class.java)
 
@@ -41,6 +39,9 @@ class FirestoreClass {
                     is MainActivity -> {
                         activity.updateNavigationUserDetails(loggedInUser!!)
                     }
+                    is MyProfileActivity -> {
+                        activity.setUserDataInUI(loggedInUser!!)
+                    }
                 }
             }.addOnFailureListener { e ->
                 when (activity) {
@@ -48,6 +49,9 @@ class FirestoreClass {
                         activity.hideProgressDialog()
                     }
                     is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MyProfileActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
