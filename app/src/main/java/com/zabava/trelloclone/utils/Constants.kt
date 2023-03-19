@@ -15,11 +15,14 @@ object Constants {
     const val NAME: String = "name"
     const val MOBILE: String = "mobile"
     const val ASSIGNED_TO: String = "assignedTo"
+    const val DOCUMENT_ID: String = "documentId"
+    const val TASK_LIST: String = "taskList"
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2
     const val MY_PROFILE_REQUEST_CODE = 11
     const val CREATE_BOARD_REQUEST_CODE = 12
+
 
      fun showImageChooser(activity: Activity) {
         val galleryIntent = Intent(

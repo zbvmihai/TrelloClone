@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.models.Board
-import org.w3c.dom.Text
 
 open class BoardItemsAdapter(private val context: Context,
                              private val list: ArrayList<Board>):
@@ -49,6 +48,10 @@ open class BoardItemsAdapter(private val context: Context,
 
     interface OnClickListener{
         fun onClick(position: Int,model: Board)
+    }
+
+    fun setOnClickListener(onClickListener: OnClickListener){
+        this.onClickListener = onClickListener
     }
 
     override fun getItemCount(): Int {
