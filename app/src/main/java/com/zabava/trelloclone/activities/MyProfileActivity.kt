@@ -38,8 +38,6 @@ class MyProfileActivity : BaseActivity() {
 
         setupActionBar()
 
-        binding?.toolbarMyProfileActivity?.setNavigationOnClickListener { onBackPressed() }
-
         FirestoreClass().loadUserData(this)
 
         binding?.ivUserProfileImage?.setOnClickListener {
@@ -119,6 +117,7 @@ class MyProfileActivity : BaseActivity() {
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         actionBar?.title = resources.getString(R.string.my_profile)
 
+        binding?.toolbarMyProfileActivity?.setNavigationOnClickListener { onBackPressed() }
     }
 
     fun setUserDataInUI(user: User) {
