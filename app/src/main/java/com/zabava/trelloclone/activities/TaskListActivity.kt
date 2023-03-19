@@ -7,6 +7,7 @@ import com.zabava.trelloclone.adapters.TaskListItemsAdapter
 import com.zabava.trelloclone.databinding.ActivityTaskListBinding
 import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.Board
+import com.zabava.trelloclone.models.Card
 import com.zabava.trelloclone.models.Task
 import com.zabava.trelloclone.utils.Constants
 
@@ -93,5 +94,30 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
 
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+    }
+
+    fun addCardToTaskList(position: Int,cardName: String){
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+
+        val cardAssignedUserList: ArrayList<String> = ArrayList()
+        cardAssignedUserList.add(FirestoreClass().getCurrentUserId())
+
+        val card = Card(cardName, FirestoreClass().getCurrentUserId(),cardAssignedUserList)
+
+        val cardsList = mBoardDetails.taskList[position].cards
+        cardsList.add(card)
+
+        val task = Task(
+            mBoardDetails.taskList[position].title,
+            mBoardDetails.taskList[position].createdBy,
+            cardsList
+        )
+
+        mBoardDetails.taskList[position] = task
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+
     }
 }

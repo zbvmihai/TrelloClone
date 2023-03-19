@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.models.Board
-import org.w3c.dom.Text
 
 open class BoardItemsAdapter(private val context: Context,
                              private val list: ArrayList<Board>):

@@ -136,9 +136,6 @@ class FirestoreClass {
                     is MyProfileActivity -> {
                         activity.setUserDataInUI(loggedInUser!!)
                     }
-                    is CreateBoardActivity -> {
-                        // TODO add create board function
-                    }
                 }
             }.addOnFailureListener { e ->
                 when (activity) {
