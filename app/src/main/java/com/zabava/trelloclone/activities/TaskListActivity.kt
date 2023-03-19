@@ -13,6 +13,8 @@ import com.zabava.trelloclone.utils.Constants
 @Suppress("DEPRECATION")
 class TaskListActivity : BaseActivity() {
 
+    private lateinit var mBoardDetails: Board
+
     private var binding: ActivityTaskListBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +28,13 @@ class TaskListActivity : BaseActivity() {
         }
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this,boardDocumentId)
+
     }
 
     fun boardDetails(board: Board){
+        mBoardDetails = board
         hideProgressDialog()
-        setupActionBar(board.name)
+        setupActionBar()
 
         val addTaskList = Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
@@ -43,14 +47,31 @@ class TaskListActivity : BaseActivity() {
         binding?.rvTaskList?.adapter = adapter
 
     }
-    private fun setupActionBar(title: String) {
+    private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarTaskListActivity)
 
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
-        actionBar?.title = title
+        actionBar?.title = mBoardDetails.name
 
         binding?.toolbarTaskListActivity?.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    fun addUpdateTaskListSuccess(){
+        hideProgressDialog()
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getBoardDetails(this,mBoardDetails.documentId)
+    }
+
+    fun createTaskList(taskListName: String){
+        val task = Task(taskListName,FirestoreClass().getCurrentUserId())
+        mBoardDetails.taskList.add(0,task)
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
 }
