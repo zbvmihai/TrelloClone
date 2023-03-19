@@ -5,12 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import androidx.core.app.ActivityCompat.startActivityForResult
-import com.zabava.trelloclone.activities.MyProfileActivity
 
 object Constants {
 
     const val USERS: String = "Users"
+    const val BOARDS: String = "Boards"
 
     const val IMAGE: String = "image"
     const val NAME: String = "name"
@@ -18,6 +17,7 @@ object Constants {
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2
+    const val MY_PROFILE_REQUEST_CODE: Int = 11
 
      fun showImageChooser(activity: Activity) {
         val galleryIntent = Intent(

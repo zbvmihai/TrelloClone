@@ -15,16 +15,17 @@ import com.zabava.trelloclone.R
 import com.zabava.trelloclone.databinding.ActivityMainBinding
 import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.User
+import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    companion object {
-        const val MY_PROFILE_REQUEST_CODE: Int = 11
-    }
+    private lateinit var mUserName: String
 
     private var binding: ActivityMainBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -36,12 +37,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().loadUserData(this)
 
         binding?.includeBar?.fabCreateBoard?.setOnClickListener {
-            startActivity(Intent(this, CreateBoardActivity::class.java))
+
+            val intent = Intent(this, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
         }
 
     }
 
     fun updateNavigationUserDetails(user: User) {
+
+        mUserName = user.name
 
         val ivUserProfile = findViewById<ImageView>(R.id.iv_user_profile_image)
         Glide
@@ -81,7 +87,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
         } else {
             Log.e("Cancelled", "Cancelled")
@@ -96,7 +102,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         this,
                         MyProfileActivity::class.java
                     ),
-                    MY_PROFILE_REQUEST_CODE
+                    Constants.MY_PROFILE_REQUEST_CODE
                 )
             }
             R.id.nav_sign_out -> {
