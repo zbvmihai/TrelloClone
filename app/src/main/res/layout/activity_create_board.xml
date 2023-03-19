@@ -39,12 +39,13 @@
                 android:orientation="vertical"
                 android:padding="@dimen/card_view_layout_content_padding">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/iv_board_image"
                     android:layout_width="@dimen/board_image_size"
                     android:layout_height="@dimen/board_image_size"
                     android:contentDescription="@string/image_contentDescription"
                     android:src="@drawable/ic_board_place_holder"
+                    app:shapeAppearance="@style/ShapeAppearanceOverlay.MaterialAlertDialog.Material3"
                     tools:ignore="ImageContrastCheck" />
 
                 <com.google.android.material.textfield.TextInputLayout
