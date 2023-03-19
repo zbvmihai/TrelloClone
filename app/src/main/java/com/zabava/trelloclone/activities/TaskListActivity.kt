@@ -1,11 +1,13 @@
 package com.zabava.trelloclone.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zabava.trelloclone.R
+import com.zabava.trelloclone.adapters.TaskListItemsAdapter
 import com.zabava.trelloclone.databinding.ActivityTaskListBinding
 import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.Board
+import com.zabava.trelloclone.models.Task
 import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
@@ -29,6 +31,16 @@ class TaskListActivity : BaseActivity() {
     fun boardDetails(board: Board){
         hideProgressDialog()
         setupActionBar(board.name)
+
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        board.taskList.add(addTaskList)
+
+        binding?.rvTaskList?.layoutManager = LinearLayoutManager(
+            this,LinearLayoutManager.HORIZONTAL,false)
+        binding?.rvTaskList?.setHasFixedSize(true)
+
+        val adapter = TaskListItemsAdapter(this,board.taskList)
+        binding?.rvTaskList?.adapter = adapter
 
     }
     private fun setupActionBar(title: String) {
