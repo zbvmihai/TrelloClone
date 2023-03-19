@@ -5,26 +5,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.zabava.trelloclone.R
+import com.zabava.trelloclone.adapters.BoardItemsAdapter
 import com.zabava.trelloclone.databinding.ActivityMainBinding
 import com.zabava.trelloclone.firebase.FirestoreClass
+import com.zabava.trelloclone.models.Board
 import com.zabava.trelloclone.models.User
+import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    companion object {
-        const val MY_PROFILE_REQUEST_CODE: Int = 11
-    }
+    private lateinit var mUserName: String
 
     private var binding: ActivityMainBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -33,11 +38,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding?.navView?.setNavigationItemSelectedListener(this)
 
-        FirestoreClass().loadUserData(this)
+        FirestoreClass().loadUserData(this, true)
 
+        binding?.includeBar?.fabCreateBoard?.setOnClickListener {
+
+            val intent = Intent(this, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivityForResult(intent,Constants.CREATE_BOARD_REQUEST_CODE)
+        }
     }
 
-    fun updateNavigationUserDetails(user: User) {
+    fun updateNavigationUserDetails(user: User, readBoardList: Boolean) {
+
+        mUserName = user.name
 
         val ivUserProfile = findViewById<ImageView>(R.id.iv_user_profile_image)
         Glide
@@ -50,6 +63,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val tvUserName = findViewById<TextView>(R.id.tv_username)
         tvUserName.text = user.name
 
+        if (readBoardList){
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardsList(this)
+        }
     }
 
     private fun setupActionBar() {
@@ -74,10 +91,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
+        }else if(resultCode == Activity.RESULT_OK && requestCode == Constants.CREATE_BOARD_REQUEST_CODE){
+            FirestoreClass().getBoardsList(this)
+
         } else {
             Log.e("Cancelled", "Cancelled")
         }
@@ -91,7 +112,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         this,
                         MyProfileActivity::class.java
                     ),
-                    MY_PROFILE_REQUEST_CODE
+                    Constants.MY_PROFILE_REQUEST_CODE
                 )
             }
             R.id.nav_sign_out -> {
@@ -105,5 +126,23 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding?.drawerLayout?.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    fun populateBoardListToUI(boardsList: ArrayList<Board>){
+        hideProgressDialog()
+
+        if (boardsList.size >0){
+            binding?.includeBar?.mainContent?.rvBoardsList?.visibility = View.VISIBLE
+            binding?.includeBar?.mainContent?.tvNoBoardsAvailable?.visibility = View.GONE
+
+            binding?.includeBar?.mainContent?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
+            binding?.includeBar?.mainContent?.rvBoardsList?.setHasFixedSize(true)
+
+            val adapter = BoardItemsAdapter(this, boardsList)
+            binding?.includeBar?.mainContent?.rvBoardsList?.adapter = adapter
+        }else{
+            binding?.includeBar?.mainContent?.rvBoardsList?.visibility = View.GONE
+            binding?.includeBar?.mainContent?.tvNoBoardsAvailable?.visibility = View.VISIBLE
+        }
     }
 }

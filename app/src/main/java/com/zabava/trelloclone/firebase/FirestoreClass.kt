@@ -7,10 +7,8 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.zabava.trelloclone.activities.MainActivity
-import com.zabava.trelloclone.activities.MyProfileActivity
-import com.zabava.trelloclone.activities.SignInActivity
-import com.zabava.trelloclone.activities.SignUpActivity
+import com.zabava.trelloclone.activities.*
+import com.zabava.trelloclone.models.Board
 import com.zabava.trelloclone.models.User
 import com.zabava.trelloclone.utils.Constants
 
@@ -25,6 +23,43 @@ class FirestoreClass {
         ).addOnSuccessListener {
             activity.userRegisteredSuccess()
         }
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName,"Board created successfully")
+                Toast.makeText(activity,"Board created successfully",Toast.LENGTH_SHORT).show()
+                activity.boardCreatedSuccessfully()
+            }.addOnFailureListener {
+                exception ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error while creating a board",exception)
+            }
+    }
+
+    fun getBoardsList(activity: MainActivity){
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                document ->
+                Log.i(activity.javaClass.simpleName, document.documents.toString())
+                val boardList: ArrayList<Board> = ArrayList()
+                for (i in document.documents){
+                    val board = i.toObject(Board::class.java)!!
+                    board.documentId = i.id
+                    boardList.add(board)
+                }
+                activity.populateBoardListToUI(boardList)
+            }.addOnFailureListener { e ->
+
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board",e)
+
+            }
     }
 
     fun updateUserProfileData(
@@ -47,7 +82,7 @@ class FirestoreClass {
     }
 
     @SuppressLint("SuspiciousIndentation")
-    fun loadUserData(activity: Activity) {
+    fun loadUserData(activity: Activity, readBoardsList: Boolean = false) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get()
             .addOnSuccessListener { document ->
                 val loggedInUser = document.toObject(User::class.java)
@@ -57,10 +92,13 @@ class FirestoreClass {
                         activity.signInSuccess(loggedInUser!!)
                     }
                     is MainActivity -> {
-                        activity.updateNavigationUserDetails(loggedInUser!!)
+                        activity.updateNavigationUserDetails(loggedInUser!!,readBoardsList)
                     }
                     is MyProfileActivity -> {
                         activity.setUserDataInUI(loggedInUser!!)
+                    }
+                    is CreateBoardActivity -> {
+                        // TODO add create board function
                     }
                 }
             }.addOnFailureListener { e ->
