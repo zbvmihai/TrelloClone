@@ -16,7 +16,7 @@ abstract class LabelColorListDialog(
     context: Context,
     private var list: ArrayList<String>,
     private var title: String = "",
-    private var mSelectedColor: String = ""
+    private var mSelectedColor: String = "",
 
 ) : Dialog(context){
 
