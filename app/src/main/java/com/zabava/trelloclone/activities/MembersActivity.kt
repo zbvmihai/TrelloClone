@@ -1,5 +1,6 @@
 package com.zabava.trelloclone.activities
 
+import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
@@ -24,6 +25,8 @@ class MembersActivity : BaseActivity() {
     private lateinit var mAssignedMembersList: ArrayList<User>
 
     private lateinit var mBoardDetails: Board
+
+    private var anyChangesMade: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -67,7 +70,11 @@ class MembersActivity : BaseActivity() {
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         actionBar?.title = resources.getString(R.string.members)
 
-        binding?.toolbarMembersActivity?.setNavigationOnClickListener { onBackPressed() }
+        binding?.toolbarMembersActivity?.setNavigationOnClickListener {
+            if (anyChangesMade){
+                setResult(Activity.RESULT_OK)
+            }
+            onBackPressed() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -111,6 +118,7 @@ class MembersActivity : BaseActivity() {
     fun memberAssignSuccess(user: User){
         hideProgressDialog()
         mAssignedMembersList.add(user)
+        anyChangesMade = true
         setupMembersList(mAssignedMembersList)
     }
 }

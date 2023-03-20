@@ -26,6 +26,7 @@ object Constants {
     const val PICK_IMAGE_REQUEST_CODE = 2
     const val MY_PROFILE_REQUEST_CODE = 11
     const val CREATE_BOARD_REQUEST_CODE = 12
+    const val MEMBER_REQUEST_CODE = 13
 
 
 
