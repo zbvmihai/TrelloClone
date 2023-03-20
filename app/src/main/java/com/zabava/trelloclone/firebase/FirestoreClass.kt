@@ -27,50 +27,47 @@ class FirestoreClass {
         }
     }
 
-    fun createBoard(activity: CreateBoardActivity, board: Board){
+    fun createBoard(activity: CreateBoardActivity, board: Board) {
         mFireStore.collection(Constants.BOARDS)
             .document()
             .set(board, SetOptions.merge())
             .addOnSuccessListener {
-                Log.e(activity.javaClass.simpleName,"Board created successfully")
-                Toast.makeText(activity,"Board created successfully",Toast.LENGTH_SHORT).show()
+                Log.e(activity.javaClass.simpleName, "Board created successfully")
+                Toast.makeText(activity, "Board created successfully", Toast.LENGTH_SHORT).show()
                 activity.boardCreatedSuccessfully()
-            }.addOnFailureListener {
-                exception ->
+            }.addOnFailureListener { exception ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName,"Error while creating a board",exception)
+                Log.e(activity.javaClass.simpleName, "Error while creating a board", exception)
             }
     }
 
-    fun getAssignedMembersListDetails(activity : MembersActivity, assignedTo: ArrayList<String>){
+    fun getAssignedMembersListDetails(activity: MembersActivity, assignedTo: ArrayList<String>) {
 
         mFireStore.collection(Constants.USERS)
-            .whereIn(Constants.ID,assignedTo)
+            .whereIn(Constants.ID, assignedTo)
             .get()
-            .addOnSuccessListener {
-                document ->
-                Log.e(activity.javaClass.simpleName,document.documents.toString())
+            .addOnSuccessListener { document ->
+                Log.e(activity.javaClass.simpleName, document.documents.toString())
 
                 val userList: ArrayList<User> = ArrayList()
 
-                for (i in document.documents){
+                for (i in document.documents) {
                     val user = i.toObject(User::class.java)!!
                     userList.add(user)
                 }
 
                 activity.setupMembersList(userList)
             }.addOnFailureListener { e ->
-                Log.e(activity.javaClass.simpleName,"Error while creating a board.",e)
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
             }
     }
 
-    fun getBoardDetails(activity: TaskListActivity, documentId: String){
+    fun getBoardDetails(activity: TaskListActivity, documentId: String) {
 
         mFireStore.collection(Constants.BOARDS)
             .document(documentId)
             .get()
-            .addOnSuccessListener {
-                    document ->
+            .addOnSuccessListener { document ->
                 Log.i(activity.javaClass.simpleName, document.toString())
                 val board = document.toObject(Board::class.java)
                 board?.documentId = documentId
@@ -80,21 +77,20 @@ class FirestoreClass {
             }.addOnFailureListener { e ->
 
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while creating a board",e)
+                Log.e(activity.javaClass.simpleName, "Error while creating a board", e)
 
             }
 
     }
 
-    fun getBoardsList(activity: MainActivity){
+    fun getBoardsList(activity: MainActivity) {
         mFireStore.collection(Constants.BOARDS)
             .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId())
             .get()
-            .addOnSuccessListener {
-                document ->
+            .addOnSuccessListener { document ->
                 Log.i(activity.javaClass.simpleName, document.documents.toString())
                 val boardList: ArrayList<Board> = ArrayList()
-                for (i in document.documents){
+                for (i in document.documents) {
                     val board = i.toObject(Board::class.java)!!
                     board.documentId = i.id
                     boardList.add(board)
@@ -103,13 +99,13 @@ class FirestoreClass {
             }.addOnFailureListener { e ->
 
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while creating a board",e)
+                Log.e(activity.javaClass.simpleName, "Error while creating a board", e)
 
             }
     }
 
-    fun addUpdateTaskList(activity: TaskListActivity, board: Board){
-        val taskListHashMap = HashMap<String,Any>()
+    fun addUpdateTaskList(activity: Activity, board: Board) {
+        val taskListHashMap = HashMap<String, Any>()
         taskListHashMap[Constants.TASK_LIST] = board.taskList
 
         mFireStore.collection(Constants.BOARDS)
@@ -117,10 +113,15 @@ class FirestoreClass {
             .update(taskListHashMap)
             .addOnSuccessListener {
                 Log.e(activity.javaClass.simpleName, "TaskList updated successfully!")
-
-                activity.addUpdateTaskListSuccess()
+                if (activity is TaskListActivity)
+                    activity.addUpdateTaskListSuccess()
+                else if (activity is CardDetailsActivity)
+                    activity.addUpdateTaskListSuccess()
             }.addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                if (activity is TaskListActivity)
+                    activity.hideProgressDialog()
+                else if (activity is CardDetailsActivity)
+                    activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
             }
     }
@@ -155,7 +156,7 @@ class FirestoreClass {
                         activity.signInSuccess(loggedInUser!!)
                     }
                     is MainActivity -> {
-                        activity.updateNavigationUserDetails(loggedInUser!!,readBoardsList)
+                        activity.updateNavigationUserDetails(loggedInUser!!, readBoardsList)
                     }
                     is MyProfileActivity -> {
                         activity.setUserDataInUI(loggedInUser!!)
@@ -187,28 +188,27 @@ class FirestoreClass {
         return currentUserID
     }
 
-    fun getMemberDetails(activity: MembersActivity,email: String){
+    fun getMemberDetails(activity: MembersActivity, email: String) {
         mFireStore.collection(Constants.USERS)
             .whereEqualTo(Constants.EMAIL, email)
             .get()
-            .addOnSuccessListener {
-                document ->
-                if (document.documents.size > 0){
+            .addOnSuccessListener { document ->
+                if (document.documents.size > 0) {
                     val user = document.documents[0].toObject(User::class.java)!!
                     activity.memberDetails(user)
-                }else{
+                } else {
                     activity.hideProgressDialog()
                     activity.showErrorSnackBar("No member found")
                 }
-            }.addOnFailureListener { e->
+            }.addOnFailureListener { e ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName,"Error while getting user details.",e)
+                Log.e(activity.javaClass.simpleName, "Error while getting user details.", e)
             }
     }
 
-    fun assignMemberToBoard(activity: MembersActivity, board:Board, user:User){
+    fun assignMemberToBoard(activity: MembersActivity, board: Board, user: User) {
 
-        val assignedToHashMap = HashMap<String,Any>()
+        val assignedToHashMap = HashMap<String, Any>()
         assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
 
         mFireStore.collection(Constants.BOARDS)
@@ -217,9 +217,9 @@ class FirestoreClass {
             .addOnSuccessListener {
                 activity.memberAssignSuccess(user)
 
-            }.addOnFailureListener { e->
+            }.addOnFailureListener { e ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName,"Error while creating the board",e)
+                Log.e(activity.javaClass.simpleName, "Error while creating the board", e)
             }
     }
 }

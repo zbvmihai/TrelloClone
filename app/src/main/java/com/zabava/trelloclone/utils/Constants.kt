@@ -28,6 +28,7 @@ object Constants {
     const val MY_PROFILE_REQUEST_CODE = 11
     const val CREATE_BOARD_REQUEST_CODE = 12
     const val MEMBER_REQUEST_CODE = 13
+    const val CARD_DETAIL_REQUEST_CODE = 14
 
      fun showImageChooser(activity: Activity) {
         val galleryIntent = Intent(
