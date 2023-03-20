@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.toObject
 import com.zabava.trelloclone.activities.*
 import com.zabava.trelloclone.models.Board
 import com.zabava.trelloclone.models.User
@@ -37,6 +38,28 @@ class FirestoreClass {
                 exception ->
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName,"Error while creating a board",exception)
+            }
+    }
+
+    fun getAssignedMembersListDetails(activity : MembersActivity, assignedTo: ArrayList<String>){
+
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID,assignedTo)
+            .get()
+            .addOnSuccessListener {
+                document ->
+                Log.e(activity.javaClass.simpleName,document.documents.toString())
+
+                val userList: ArrayList<User> = ArrayList()
+
+                for (i in document.documents){
+                    val user = i.toObject(User::class.java)!!
+                    userList.add(user)
+                }
+
+                activity.setupMembersList(userList)
+            }.addOnFailureListener { e ->
+                Log.e(activity.javaClass.simpleName,"Error while creating a board.",e)
             }
     }
 

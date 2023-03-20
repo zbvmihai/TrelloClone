@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="@dimen/item_member_marginBottom"
     android:orientation="vertical">
 
@@ -15,6 +16,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_member_image"
+            app:shapeAppearance="@style/ShapeAppearanceOverlay.MaterialAlertDialog.Material3"
             android:layout_width="@dimen/item_member_member_image_size"
             android:layout_height="@dimen/item_member_member_image_size"
             android:contentDescription="@string/image_contentDescription"

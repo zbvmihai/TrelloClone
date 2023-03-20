@@ -1,14 +1,17 @@
 package com.zabava.trelloclone.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zabava.trelloclone.R
+import com.zabava.trelloclone.adapters.MembersAdapter
 import com.zabava.trelloclone.databinding.ActivityMembersBinding
+import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.Board
+import com.zabava.trelloclone.models.User
 import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
-class MembersActivity : AppCompatActivity() {
+class MembersActivity : BaseActivity() {
 
     private var binding : ActivityMembersBinding? = null
 
@@ -25,6 +28,19 @@ class MembersActivity : AppCompatActivity() {
         }
 
         setupActionBar()
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
+    }
+
+    fun setupMembersList(list: ArrayList<User>){
+        hideProgressDialog()
+
+        binding?.rvMembersList?.layoutManager = LinearLayoutManager(this)
+        binding?.rvMembersList?.setHasFixedSize(true)
+
+        val adapter = MembersAdapter(this, list)
+        binding?.rvMembersList?.adapter = adapter
     }
 
     private fun setupActionBar() {
