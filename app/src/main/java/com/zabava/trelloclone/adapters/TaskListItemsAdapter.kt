@@ -37,9 +37,9 @@ open class TaskListItemsAdapter(
 
     @SuppressLint("CutPasteId")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val model = list[position]
+        val model = list[holder.adapterPosition]
         if (holder is MyViewHolder){
-            if (position == list.size-1){
+            if (holder.adapterPosition == list.size-1){
                 holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).visibility = View.VISIBLE
                 holder.itemView.findViewById<LinearLayout>(R.id.ll_task_item).visibility = View.GONE
             }else{
@@ -85,7 +85,7 @@ open class TaskListItemsAdapter(
 
                 if (listName.isNotEmpty()){
                     if (context is TaskListActivity){
-                        context.updateTaskList(position,listName,model)
+                        context.updateTaskList(holder.adapterPosition,listName,model)
                     }
                 }else{
                     Toast.makeText(context,"Please enter a list name!",Toast.LENGTH_SHORT).show()
@@ -93,7 +93,7 @@ open class TaskListItemsAdapter(
             }
 
             holder.itemView.findViewById<ImageButton>(R.id.ib_delete_list).setOnClickListener {
-                alertDialogForDeleteList(position,model.title)
+                alertDialogForDeleteList(holder.adapterPosition,model.title)
             }
 
             holder.itemView.findViewById<TextView>(R.id.tv_add_card).setOnClickListener {
@@ -112,7 +112,7 @@ open class TaskListItemsAdapter(
 
                 if (cardName.isNotEmpty()){
                     if (context is TaskListActivity){
-                        context.addCardToTaskList(position,cardName)
+                        context.addCardToTaskList(holder.adapterPosition,cardName)
                     }
                 }else{
                     Toast.makeText(context,"Please enter a card name!",Toast.LENGTH_SHORT).show()
@@ -126,6 +126,18 @@ open class TaskListItemsAdapter(
             val adapter = CardListItemsAdapter(context,model.cards)
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list)
                 .adapter = adapter
+
+            adapter.setOnClickListener(
+                object:  CardListItemsAdapter.OnClickListener{
+                    override fun onClick(position: Int) {
+
+                        if (context is TaskListActivity){
+                            context.cardDetails(holder.adapterPosition, position)
+                        }
+
+                    }
+                }
+            )
         }
     }
 
