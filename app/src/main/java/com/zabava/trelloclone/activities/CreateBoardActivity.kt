@@ -139,7 +139,6 @@ class CreateBoardActivity : BaseActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         actionBar?.title = resources.getString(R.string.create_board_title)
-
     }
 
     override fun onRequestPermissionsResult(
