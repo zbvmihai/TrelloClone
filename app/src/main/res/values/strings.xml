@@ -49,4 +49,5 @@
     <string name="select_members">Select Members</string>
     <string name="due_date">Due Date</string>
     <string name="select_due_date">Select Due Date</string>
+    <string name="updatecard">Update Card</string>
 </resources>
