@@ -6,14 +6,16 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import com.zabava.trelloclone.R
+import com.zabava.trelloclone.adapters.CardMemberListItemsAdapter
 import com.zabava.trelloclone.databinding.ActivityCardDetailsBinding
 import com.zabava.trelloclone.dialogs.LabelColorListDialog
+import com.zabava.trelloclone.dialogs.MembersListDialog
 import com.zabava.trelloclone.firebase.FirestoreClass
-import com.zabava.trelloclone.models.Board
-import com.zabava.trelloclone.models.Card
-import com.zabava.trelloclone.models.Task
+import com.zabava.trelloclone.models.*
 import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
@@ -25,6 +27,8 @@ class CardDetailsActivity : BaseActivity() {
 
     private var mSelectedColor = ""
 
+    private lateinit var mMembersDetailList: ArrayList<User>
+
     private var binding: ActivityCardDetailsBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +38,7 @@ class CardDetailsActivity : BaseActivity() {
 
         getIntentData()
         setupActionBar()
+
 
         binding?.etNameCardDetails?.setText(
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name)
@@ -53,6 +58,12 @@ class CardDetailsActivity : BaseActivity() {
         binding?.tvSelectLabelColor?.setOnClickListener{
             labelColorsListDialog()
         }
+
+        binding?.tvSelectMembers?.setOnClickListener{
+            membersListDialog()
+        }
+
+        setupSelectedMembersList()
     }
 
     private fun setupActionBar() {
@@ -120,6 +131,9 @@ class CardDetailsActivity : BaseActivity() {
         if (intent.hasExtra(Constants.TASK_LIST_ITEM_POSITION)) {
             mTaskListPosition = intent.getIntExtra(Constants.TASK_LIST_ITEM_POSITION, -1)
         }
+        if (intent.hasExtra(Constants.BOARD_MEMBERS_LIST)) {
+            mMembersDetailList = intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
+        }
     }
 
     fun addUpdateTaskListSuccess() {
@@ -127,6 +141,59 @@ class CardDetailsActivity : BaseActivity() {
 
         setResult(Activity.RESULT_OK)
         finish()
+    }
+
+    private fun membersListDialog(){
+        val cardAssignedMembersList =
+            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo
+
+        if (cardAssignedMembersList.size > 0){
+            for (i in mMembersDetailList.indices){
+                for (j in cardAssignedMembersList){
+                    if (mMembersDetailList[i].id == j){
+                        mMembersDetailList[i].selected = true
+                    }
+                }
+            }
+        }else{
+            for (i in mMembersDetailList.indices){
+                mMembersDetailList[i].selected = false
+            }
+        }
+
+        val listDialog = object: MembersListDialog(
+            this@CardDetailsActivity,mMembersDetailList,
+            resources.getString(R.string.str_select_member)
+        ){
+            override fun onItemSelected(user: User, action: String) {
+
+                if (action == Constants.SELECT){
+                    if (!mBoardDetails
+                            .taskList[mTaskListPosition]
+                            .cards[mCardPosition]
+                            .assignedTo.contains(user.id)){
+                        mBoardDetails
+                            .taskList[mTaskListPosition]
+                            .cards[mCardPosition]
+                            .assignedTo.add(user.id)
+                    }
+                }else{
+                    mBoardDetails
+                        .taskList[mTaskListPosition]
+                        .cards[mCardPosition]
+                        .assignedTo.remove(user.id)
+
+                    for (i in mMembersDetailList.indices){
+                        if (mMembersDetailList[i].id == user.id){
+                            mMembersDetailList[i].selected = false
+                        }
+                    }
+                }
+                setupSelectedMembersList()
+            }
+        }
+        listDialog.show()
+
     }
 
     private fun updateCardDetails() {
@@ -137,7 +204,11 @@ class CardDetailsActivity : BaseActivity() {
             mSelectedColor
         )
 
+        val taskList: ArrayList<Task> = mBoardDetails.taskList
+        taskList.removeAt(taskList.size - 1)
+
         mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition] = card
+
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this@CardDetailsActivity, mBoardDetails)
     }
@@ -176,5 +247,46 @@ class CardDetailsActivity : BaseActivity() {
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
+    }
+
+    private fun setupSelectedMembersList(){
+        val cardAssignedMembersList =
+            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo
+
+        val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+
+        for (i in mMembersDetailList.indices){
+            for (j in cardAssignedMembersList){
+                if (mMembersDetailList[i].id == j){
+                    val selectedMember = SelectedMembers(
+                        mMembersDetailList[i].id,
+                        mMembersDetailList[i].image
+                    )
+                    selectedMembersList.add(selectedMember)
+                }
+            }
+        }
+        if (selectedMembersList.size > 0){
+            selectedMembersList.add(SelectedMembers("",""))
+
+            binding?.tvSelectMembers?.visibility = View.GONE
+            binding?.rvSelectedMembersList?.visibility = View.VISIBLE
+
+            binding?.rvSelectedMembersList?.layoutManager = GridLayoutManager(this@CardDetailsActivity,6)
+
+            val adapter = CardMemberListItemsAdapter(this@CardDetailsActivity,selectedMembersList, true)
+            binding?.rvSelectedMembersList?.adapter = adapter
+            adapter.setOnClickListener(
+                object: CardMemberListItemsAdapter.OnClickListener{
+                    override fun onClick() {
+                        membersListDialog()
+                    }
+                }
+            )
+        }else{
+            binding?.tvSelectMembers?.visibility = View.VISIBLE
+            binding?.rvSelectedMembersList?.visibility = View.GONE
+        }
     }
 }

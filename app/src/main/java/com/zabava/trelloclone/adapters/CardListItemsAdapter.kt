@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zabava.trelloclone.R
+import com.zabava.trelloclone.activities.TaskListActivity
 import com.zabava.trelloclone.models.Card
+import com.zabava.trelloclone.models.SelectedMembers
 
 open class CardListItemsAdapter (
     private val context: Context,
@@ -24,7 +27,7 @@ open class CardListItemsAdapter (
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val model = list[position]
+        val model = list[holder.adapterPosition]
 
         if (holder is MyViewHolder) {
 
@@ -37,9 +40,59 @@ open class CardListItemsAdapter (
 
             holder.itemView.findViewById<TextView>(R.id.tv_card_name).text = model.name
 
+            if((context as TaskListActivity).mAssignedMemberDetailList.size > 0){
+
+                val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+                for (i in context.mAssignedMemberDetailList.indices){
+                    for (j in model.assignedTo){
+                        if (context.mAssignedMemberDetailList[i].id ==j ){
+                            val selectedMembers = SelectedMembers(
+                                context.mAssignedMemberDetailList[i].id,
+                                context.mAssignedMemberDetailList[i].image
+                            )
+                            selectedMembersList.add(selectedMembers)
+                        }
+                    }
+                }
+
+                if (selectedMembersList.size > 0){
+                    if (selectedMembersList.size == 1
+                        && selectedMembersList[0].id == model.createdBy){
+                        holder.itemView.
+                        findViewById<RecyclerView>(R.id.rv_card_selected_members_list)
+                            .visibility = View.GONE
+                    }else{
+                        holder.itemView.
+                        findViewById<RecyclerView>(R.id.rv_card_selected_members_list)
+                            .visibility = View.VISIBLE
+
+                        holder.itemView.
+                        findViewById<RecyclerView>(R.id.rv_card_selected_members_list)
+                            .layoutManager = GridLayoutManager(context,4)
+                        val adapter = CardMemberListItemsAdapter(context,
+                            selectedMembersList,false)
+                        holder.itemView.
+                        findViewById<RecyclerView>(R.id.rv_card_selected_members_list)
+                            .adapter = adapter
+                        adapter.setOnClickListener(object: CardMemberListItemsAdapter.OnClickListener{
+                            override fun onClick() {
+                                if(onClickListener != null){
+                                    onClickListener!!.onClick(holder.adapterPosition)
+                                }
+                            }
+                        })
+                    }
+                }else{
+                    holder.itemView.
+                    findViewById<RecyclerView>(R.id.rv_card_selected_members_list)
+                        .visibility = View.GONE
+                }
+            }
+
             holder.itemView.setOnClickListener{
                 if (onClickListener != null){
-                    onClickListener!!.onClick(position)
+                    onClickListener!!.onClick(holder.adapterPosition)
                 }
             }
         }

@@ -26,7 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/item_member_detail_layout_marginStart"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="1"
+            tools:ignore="InefficientWeight">
 
             <TextView
                 android:id="@+id/tv_member_name"
@@ -44,7 +46,20 @@
                 android:textSize="@dimen/item_member_email_text_size"
                 tools:ignore="TextContrastCheck"
                 tools:text="Email" />
+
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_selected_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="@dimen/item_label_color_selected_image_marginEnd"
+            android:contentDescription="@string/image_contentDescription"
+            android:src="@drawable/ic_done"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
     <View

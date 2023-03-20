@@ -49,6 +49,7 @@
                         android:hint="@string/hint_card_name"
                         android:inputType="text"
                         android:textSize="@dimen/et_text_size"
+                        tools:ignore="TextContrastCheck"
                         tools:text="Test" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +74,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_color"
                     android:textColor="@color/secondaryTextColor"
-                    android:textSize="@dimen/card_details_label_text_size" />
+                    android:textSize="@dimen/card_details_label_text_size"
+                    tools:ignore="TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/tv_select_label_color"
@@ -90,7 +92,8 @@
                     android:layout_marginTop="@dimen/card_details_members_label_marginTop"
                     android:text="@string/members"
                     android:textColor="@color/secondaryTextColor"
-                    android:textSize="@dimen/card_details_label_text_size" />
+                    android:textSize="@dimen/card_details_label_text_size"
+                    tools:ignore="TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/tv_select_members"
@@ -101,13 +104,22 @@
                     android:text="@string/select_members"
                     android:textColor="@color/primaryTextColor" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_selected_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/card_details_value_marginTop"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/card_details_members_label_marginTop"
                     android:text="@string/due_date"
                     android:textColor="@color/secondaryTextColor"
-                    android:textSize="@dimen/card_details_label_text_size" />
+                    android:textSize="@dimen/card_details_label_text_size"
+                    tools:ignore="TextContrastCheck" />
 
                 <TextView
                     android:id="@+id/tv_select_due_date"
@@ -130,7 +142,8 @@
                     android:paddingBottom="@dimen/btn_paddingTopBottom"
                     android:text="@string/update"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/btn_text_size" />
+                    android:textSize="@dimen/btn_text_size"
+                    tools:ignore="TextContrastCheck" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

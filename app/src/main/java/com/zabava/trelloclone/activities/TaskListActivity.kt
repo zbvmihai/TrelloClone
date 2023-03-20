@@ -14,16 +14,17 @@ import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.Board
 import com.zabava.trelloclone.models.Card
 import com.zabava.trelloclone.models.Task
+import com.zabava.trelloclone.models.User
 import com.zabava.trelloclone.utils.Constants
 
 @Suppress("DEPRECATION")
 class TaskListActivity : BaseActivity() {
 
     private lateinit var mBoardDetails: Board
+    private lateinit var mBoardDocumentID: String
+    lateinit var mAssignedMemberDetailList: ArrayList<User>
 
     private var binding: ActivityTaskListBinding? = null
-
-    private lateinit var mBoardDocumentID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
@@ -40,19 +41,13 @@ class TaskListActivity : BaseActivity() {
 
     fun boardDetails(board: Board) {
         mBoardDetails = board
+
         hideProgressDialog()
         setupActionBar()
 
-        val addTaskList = Task(resources.getString(R.string.add_list))
-        board.taskList.add(addTaskList)
+        showProgressDialog(resources.getString(R.string.please_wait))
 
-        binding?.rvTaskList?.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false
-        )
-        binding?.rvTaskList?.setHasFixedSize(true)
-
-        val adapter = TaskListItemsAdapter(this, board.taskList)
-        binding?.rvTaskList?.adapter = adapter
+        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
 
     }
 
@@ -75,6 +70,7 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailList)
         startActivityForResult(intent,Constants.CARD_DETAIL_REQUEST_CODE)
     }
 
@@ -165,6 +161,21 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
 
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+    }
 
+    fun boardMembersDetailsList(list: ArrayList<User>){
+        mAssignedMemberDetailList = list
+        hideProgressDialog()
+
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        mBoardDetails.taskList.add(addTaskList)
+
+        binding?.rvTaskList?.layoutManager = LinearLayoutManager(
+            this, LinearLayoutManager.HORIZONTAL, false
+        )
+        binding?.rvTaskList?.setHasFixedSize(true)
+
+        val adapter = TaskListItemsAdapter(this, mBoardDetails.taskList)
+        binding?.rvTaskList?.adapter = adapter
     }
 }
