@@ -1,6 +1,12 @@
 package com.zabava.trelloclone.activities
 
+import android.app.Dialog
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.adapters.MembersAdapter
@@ -14,6 +20,8 @@ import com.zabava.trelloclone.utils.Constants
 class MembersActivity : BaseActivity() {
 
     private var binding : ActivityMembersBinding? = null
+
+    private lateinit var mAssignedMembersList: ArrayList<User>
 
     private lateinit var mBoardDetails: Board
 
@@ -34,6 +42,9 @@ class MembersActivity : BaseActivity() {
     }
 
     fun setupMembersList(list: ArrayList<User>){
+
+        mAssignedMembersList = list
+
         hideProgressDialog()
 
         binding?.rvMembersList?.layoutManager = LinearLayoutManager(this)
@@ -41,6 +52,11 @@ class MembersActivity : BaseActivity() {
 
         val adapter = MembersAdapter(this, list)
         binding?.rvMembersList?.adapter = adapter
+    }
+
+    fun memberDetails(user: User){
+        mBoardDetails.assignedTo.add(user.id)
+        FirestoreClass().assignMemberToBoard(this,mBoardDetails,user)
     }
 
     private fun setupActionBar() {
@@ -52,5 +68,49 @@ class MembersActivity : BaseActivity() {
         actionBar?.title = resources.getString(R.string.members)
 
         binding?.toolbarMembersActivity?.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_add_member,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.action_add_member -> {
+                dialogSearchMember()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun dialogSearchMember(){
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_search_member)
+
+        dialog.findViewById<TextView>(R.id.tv_add_member).setOnClickListener{
+            val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString()
+
+            if (email.isNotEmpty()){
+                dialog.dismiss()
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().getMemberDetails(this,email)
+            }else{
+                Toast.makeText(this,"Please enter member email address.",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.findViewById<TextView>(R.id.tv_cancel_add_member).setOnClickListener{
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun memberAssignSuccess(user: User){
+        hideProgressDialog()
+        mAssignedMembersList.add(user)
+        setupMembersList(mAssignedMembersList)
     }
 }
