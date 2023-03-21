@@ -25,6 +25,18 @@ object Constants {
     const val BOARD_MEMBERS_LIST: String= "board_members_list"
     const val SELECT: String = "Select"
     const val UN_SELECT: String = "UnSelect"
+    const val TRELLOCLONE_PREFERENCES = "TrelloClone_Preferences"
+    const val FCM_TOKEN:String = "fcmToken"
+    const val FCM_TOKEN_UPDATED:String = "fcmTokenUpdated"
+
+    const val FCM_BASE_URL:String = "https://fcm.googleapis.com/fcm/send"
+    const val FCM_AUTHORIZATION:String = "authorization"
+    const val FCM_KEY:String = "key"
+    const val FCM_SERVER_KEY:String = "AAAAlTNz-1A:APA91bGG-WyQjKQCa1KKRND11Ei21UN-7zBFZMeGCXcGhvX5mOjzdjygCbthFgLR2nfouUCGTmzfdQ9WERtNdTsB2hEYz98WMSRHZHclt8lVAjqZSEp1IUDWjbxgBpw-rJq-JsMlfTyO"
+    const val FCM_KEY_TITLE:String = "title"
+    const val FCM_KEY_MESSAGE:String = "message"
+    const val FCM_KEY_DATA:String = "data"
+    const val FCM_KEY_TO:String = "to"
 
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2
