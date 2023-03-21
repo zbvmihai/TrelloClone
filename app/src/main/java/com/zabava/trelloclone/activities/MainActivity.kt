@@ -30,7 +30,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private lateinit var mUserName: String
     private lateinit var mSharedPreferences: SharedPreferences
-
     private var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,20 +43,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding?.navView?.setNavigationItemSelectedListener(this)
 
         mSharedPreferences =
-            this.getSharedPreferences(Constants.TRELLOCLONE_PREFERENCES,Context.MODE_PRIVATE)
+            this.getSharedPreferences(Constants.TRELLOCLONE_PREFERENCES, Context.MODE_PRIVATE)
 
-        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED,false)
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
 
-        if (tokenUpdated){
+        if (tokenUpdated) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().loadUserData(this, true)
-        }else{
+        } else {
             FirebaseMessaging.getInstance().token
                 .addOnSuccessListener { token ->
                     updateToken(token)
                     Log.d(TAG, "Token: $token")
-                }
-                .addOnFailureListener { exception ->
+
+                }.addOnFailureListener { exception ->
                     Log.e(TAG, "Error getting token", exception)
                 }
         }
@@ -68,11 +67,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             val intent = Intent(this, CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME, mUserName)
-            startActivityForResult(intent,Constants.CREATE_BOARD_REQUEST_CODE)
+            startActivityForResult(intent, Constants.CREATE_BOARD_REQUEST_CODE)
         }
     }
 
     fun updateNavigationUserDetails(user: User, readBoardList: Boolean) {
+
         hideProgressDialog()
         mUserName = user.name
 
@@ -87,13 +87,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val tvUserName = findViewById<TextView>(R.id.tv_username)
         tvUserName.text = user.name
 
-        if (readBoardList){
+        if (readBoardList) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardsList(this)
         }
     }
 
     private fun setupActionBar() {
+
         setSupportActionBar(binding?.includeBar?.toolbarMainActivity)
         binding?.includeBar?.toolbarMainActivity?.setNavigationIcon(R.drawable.ic_action_navigation_menu)
         binding?.includeBar?.toolbarMainActivity?.setNavigationOnClickListener {
@@ -117,10 +118,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
-        }else if(resultCode == Activity.RESULT_OK && requestCode == Constants.CREATE_BOARD_REQUEST_CODE){
+        } else if (resultCode == Activity.RESULT_OK && requestCode == Constants.CREATE_BOARD_REQUEST_CODE) {
             FirestoreClass().getBoardsList(this)
 
         } else {
@@ -129,16 +131,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
         when (item.itemId) {
             R.id.nav_my_profile -> {
                 startActivityForResult(
                     Intent(
                         this,
-                        MyProfileActivity::class.java
-                    ),
-                    Constants.MY_PROFILE_REQUEST_CODE
-                )
-            }
+                        MyProfileActivity::class.java),
+                    Constants.MY_PROFILE_REQUEST_CODE)}
+
             R.id.nav_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
 
@@ -150,47 +151,50 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         }
         binding?.drawerLayout?.closeDrawer(GravityCompat.START)
-
         return true
     }
 
-    fun populateBoardListToUI(boardsList: ArrayList<Board>){
+    fun populateBoardListToUI(boardsList: ArrayList<Board>) {
+
         hideProgressDialog()
 
-        if (boardsList.size >0){
+        if (boardsList.size > 0) {
             binding?.includeBar?.mainContent?.rvBoardsList?.visibility = View.VISIBLE
             binding?.includeBar?.mainContent?.tvNoBoardsAvailable?.visibility = View.GONE
 
-            binding?.includeBar?.mainContent?.rvBoardsList?.layoutManager = LinearLayoutManager(this)
+            binding?.includeBar?.mainContent?.rvBoardsList?.layoutManager =
+                LinearLayoutManager(this)
             binding?.includeBar?.mainContent?.rvBoardsList?.setHasFixedSize(true)
 
             val adapter = BoardItemsAdapter(this, boardsList)
             binding?.includeBar?.mainContent?.rvBoardsList?.adapter = adapter
 
-            adapter.setOnClickListener(object: BoardItemsAdapter.OnClickListener{
+            adapter.setOnClickListener(object : BoardItemsAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Board) {
-                    val intent = Intent(this@MainActivity,TaskListActivity::class.java)
+                    val intent = Intent(this@MainActivity, TaskListActivity::class.java)
                     intent.putExtra(Constants.DOCUMENT_ID, model.documentId)
                     startActivity(intent)
                 }
             })
-        }else{
+        } else {
             binding?.includeBar?.mainContent?.rvBoardsList?.visibility = View.GONE
             binding?.includeBar?.mainContent?.tvNoBoardsAvailable?.visibility = View.VISIBLE
         }
     }
 
     fun tokenUpdateSuccess() {
+
         hideProgressDialog()
         val editor: SharedPreferences.Editor = mSharedPreferences.edit()
-        editor.putBoolean(Constants.FCM_TOKEN_UPDATED,true)
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
         editor.apply()
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().loadUserData(this,true)
+        FirestoreClass().loadUserData(this, true)
     }
 
-    private fun updateToken(token: String){
-        val userHashMap = HashMap<String,Any>()
+    private fun updateToken(token: String) {
+
+        val userHashMap = HashMap<String, Any>()
         userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserProfileData(this, userHashMap)

@@ -14,6 +14,7 @@ open class CardMemberListItemsAdapter(
     private val context: Context,
     private val list: ArrayList<SelectedMembers>,
     private val assignMembers: Boolean
+
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -30,7 +31,8 @@ open class CardMemberListItemsAdapter(
 
         if (holder is MyViewHolder) {
             if (holder.adapterPosition == list.size - 1 && assignMembers) {
-                holder.itemView.findViewById<ImageView>(R.id.iv_add_member).visibility = View.VISIBLE
+                holder.itemView.findViewById<ImageView>(R.id.iv_add_member).visibility =
+                    View.VISIBLE
                 holder.itemView.findViewById<ImageView>(R.id.iv_selected_member_image).visibility =
                     View.GONE
             } else {

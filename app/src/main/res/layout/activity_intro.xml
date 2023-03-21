@@ -62,8 +62,8 @@
         android:text="@string/sign_in"
         android:textColor="@android:color/white"
         android:textSize="@dimen/btn_text_size"
-        tools:targetApi="m"
-        tools:ignore="UnusedAttribute" />
+        tools:ignore="UnusedAttribute"
+        tools:targetApi="m" />
 
     <Button
         android:id="@+id/btn_sign_up_intro"
@@ -81,6 +81,6 @@
         android:text="@string/sign_up"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/btn_text_size"
-        tools:targetApi="m"
-        tools:ignore="UnusedAttribute" />
+        tools:ignore="UnusedAttribute"
+        tools:targetApi="m" />
 </LinearLayout>

@@ -23,6 +23,6 @@
         android:contentDescription="@string/image_contentDescription"
         android:src="@drawable/ic_add_member"
         android:visibility="visible"
-        tools:visibility="visible"
-        tools:ignore="ImageContrastCheck"/>
+        tools:ignore="ImageContrastCheck"
+        tools:visibility="visible" />
 </LinearLayout>

@@ -18,7 +18,7 @@ abstract class LabelColorListDialog(
     private var title: String = "",
     private var mSelectedColor: String = "",
 
-) : Dialog(context){
+    ) : Dialog(context) {
 
     private var adapter: LabelColorAdapter? = null
 
@@ -26,7 +26,7 @@ abstract class LabelColorListDialog(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val view = LayoutInflater.from(context).inflate(R.layout.dialog_list,null)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_list, null)
 
         setContentView(view)
         setCanceledOnTouchOutside(true)
@@ -34,16 +34,16 @@ abstract class LabelColorListDialog(
         setUpRecyclerView(view)
     }
 
-    private fun setUpRecyclerView(view: View){
+    private fun setUpRecyclerView(view: View) {
         view.findViewById<TextView>(R.id.tv_dialog_Title).text = title
         val colorRv = view.findViewById<RecyclerView>(R.id.rv_List)
         colorRv.layoutManager = LinearLayoutManager(context)
-        adapter = LabelColorAdapter(context,list,mSelectedColor)
+        adapter = LabelColorAdapter(context, list, mSelectedColor)
         colorRv.adapter = adapter
 
-        adapter!!.onItemClickListener = object: LabelColorAdapter.OnItemClickListener{
+        adapter!!.onItemClickListener = object : LabelColorAdapter.OnItemClickListener {
             override fun onClick(position: Int, color: String) {
-               dismiss()
+                dismiss()
                 onItemSelected(color)
             }
         }

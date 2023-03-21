@@ -24,11 +24,8 @@ import java.io.IOException
 class CreateBoardActivity : BaseActivity() {
 
     private var mSelectedImageFileURI: Uri? = null
-
     private var binding: ActivityCreateBoardBinding? = null
-
     private lateinit var mUserName: String
-
     private var mBoardImageURL: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,16 +60,16 @@ class CreateBoardActivity : BaseActivity() {
         }
 
         binding?.btnCreate?.setOnClickListener {
-            if (mSelectedImageFileURI != null){
+            if (mSelectedImageFileURI != null) {
                 uploadBoardImage()
-            }else{
+            } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 createBoard()
             }
         }
     }
 
-    private fun createBoard(){
+    private fun createBoard() {
 
         val assignedUsersArrayList: ArrayList<String> = ArrayList()
         assignedUsersArrayList.add(getCurrentUserID())
@@ -84,10 +81,10 @@ class CreateBoardActivity : BaseActivity() {
             assignedUsersArrayList
         )
 
-        FirestoreClass().createBoard(this,board)
+        FirestoreClass().createBoard(this, board)
     }
 
-    private fun uploadBoardImage(){
+    private fun uploadBoardImage() {
 
         showProgressDialog(resources.getString(R.string.please_wait))
 
@@ -102,25 +99,21 @@ class CreateBoardActivity : BaseActivity() {
 
             sRef.putFile(mSelectedImageFileURI!!).addOnSuccessListener { taskSnapshot ->
                 Log.i(
-                    "FB Board Image URL", taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
-                )
+                    "FB Board Image URL",
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
 
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
                     Log.i(
-                        "Downloadable Image URL", uri.toString()
-                    )
+                        "Downloadable Image URL", uri.toString())
                     mBoardImageURL = uri.toString()
 
                     createBoard()
                 }
-
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     this,
                     exception.message,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                    Toast.LENGTH_SHORT).show()
 
                 hideProgressDialog()
             }
@@ -128,12 +121,14 @@ class CreateBoardActivity : BaseActivity() {
     }
 
     fun boardCreatedSuccessfully() {
+
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
         finish()
     }
 
     private fun setupActionBar() {
+
         setSupportActionBar(binding?.toolbarCreateBoardActivity)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -142,10 +137,10 @@ class CreateBoardActivity : BaseActivity() {
     }
 
     override fun onRequestPermissionsResult(
+
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+        grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty()
@@ -153,13 +148,16 @@ class CreateBoardActivity : BaseActivity() {
             ) {
                 Constants.showImageChooser(this)
             } else {
-                Toast.makeText(this, "Permission for storage denied.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    "Permission for storage denied.",
+                    Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK

@@ -19,7 +19,7 @@ import com.zabava.trelloclone.activities.SignInActivity
 import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.utils.Constants
 
-class MyFirebaseMessagingService: FirebaseMessagingService() {
+class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -27,7 +27,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         sendRegistrationToServer(token)
     }
 
-    private fun sendRegistrationToServer(token: String?){
+    private fun sendRegistrationToServer(token: String?) {
         val sharedPreferences =
             this.getSharedPreferences(Constants.TRELLOCLONE_PREFERENCES, Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -46,7 +46,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
             val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
 
-            sendNotification(title,message)
+            sendNotification(title, message)
         }
 
         remoteMessage.notification?.let {
@@ -55,24 +55,28 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag", "InlinedApi")
-    private fun sendNotification(title:String, message: String){
+    private fun sendNotification(title: String, message: String) {
 
-        val intent = if (FirestoreClass().getCurrentUserId().isNotEmpty()){
+        val intent = if (FirestoreClass().getCurrentUserId().isNotEmpty()) {
             Intent(this, MainActivity::class.java)
-        }else{
+        } else {
             Intent(this, SignInActivity::class.java)
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
 
-        val pendingIntent = PendingIntent.getActivity(this,
+        val pendingIntent = PendingIntent.getActivity(
+            this,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val channelId = this.resources.getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this,channelId)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_stat_ic_notification)
             .setContentTitle(title)
             .setContentText(message)
@@ -80,19 +84,21 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
                 "Channel TrelloClone Title",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.notify(0,notificationBuilder.build())
+        notificationManager.notify(0, notificationBuilder.build())
     }
 
-    companion object{
+    companion object {
         private const val TAG = "MyFirebaseMsgService"
     }
 }

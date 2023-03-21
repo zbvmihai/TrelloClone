@@ -28,7 +28,6 @@ data class Card(
 
     override fun describeContents() = 0
 
-
     companion object CREATOR : Parcelable.Creator<Card> {
         override fun createFromParcel(parcel: Parcel): Card {
             return Card(parcel)

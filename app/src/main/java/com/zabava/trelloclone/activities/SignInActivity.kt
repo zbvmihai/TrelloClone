@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.databinding.ActivitySignInBinding
 import com.zabava.trelloclone.firebase.FirestoreClass
-import com.zabava.trelloclone.models.User
 
 @Suppress("DEPRECATION")
 class SignInActivity : BaseActivity() {
@@ -19,6 +18,7 @@ class SignInActivity : BaseActivity() {
     private var binding: ActivitySignInBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -34,9 +34,10 @@ class SignInActivity : BaseActivity() {
         binding?.btnSignIn?.setOnClickListener { signInRegisteredUser() }
     }
 
-    fun signInSuccess(user: User){
+    fun signInSuccess() {
+
         hideProgressDialog()
-        startActivity(Intent(this,MainActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
@@ -78,11 +79,11 @@ class SignInActivity : BaseActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     hideProgressDialog()
-                    if (task.isSuccessful){
+                    if (task.isSuccessful) {
                         FirestoreClass().loadUserData(this)
                     } else {
                         Log.w("Sign in", "signInWithEmail:failure")
-                        Toast.makeText(this,"Authentication failed",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
