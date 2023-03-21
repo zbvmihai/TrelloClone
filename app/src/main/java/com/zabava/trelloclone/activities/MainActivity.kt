@@ -46,7 +46,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mSharedPreferences =
             this.getSharedPreferences(Constants.TRELLOCLONE_PREFERENCES,Context.MODE_PRIVATE)
 
-        val tokenUpdated = mSharedPreferences.getBoolean(Constants.TOKEN_UPDATED,false)
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED,false)
 
         if (tokenUpdated){
             showProgressDialog(resources.getString(R.string.please_wait))
@@ -183,7 +183,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     fun tokenUpdateSuccess() {
         hideProgressDialog()
         val editor: SharedPreferences.Editor = mSharedPreferences.edit()
-        editor.putBoolean(Constants.TOKEN_UPDATED,true)
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED,true)
         editor.apply()
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().loadUserData(this,true)
@@ -191,7 +191,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun updateToken(token: String){
         val userHashMap = HashMap<String,Any>()
-        userHashMap[Constants.TOKEN] = token
+        userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserProfileData(this, userHashMap)
     }
