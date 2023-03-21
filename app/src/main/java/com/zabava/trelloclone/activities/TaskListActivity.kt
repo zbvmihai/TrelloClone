@@ -47,7 +47,7 @@ class TaskListActivity : BaseActivity() {
 
         showProgressDialog(resources.getString(R.string.please_wait))
 
-        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
+        FirestoreClass().getAssignedMembersListDetails(this, mBoardDetails.assignedTo)
 
     }
 
@@ -57,21 +57,22 @@ class TaskListActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK &&
             requestCode == Constants.MEMBER_REQUEST_CODE ||
-                requestCode == Constants.CARD_DETAIL_REQUEST_CODE){
-        showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().getBoardDetails(this,mBoardDocumentID)
-        }else{
-            Log.e("Canceled","Canceled")
+            requestCode == Constants.CARD_DETAIL_REQUEST_CODE
+        ) {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardDetails(this, mBoardDocumentID)
+        } else {
+            Log.e("Canceled", "Canceled")
         }
     }
 
-    fun cardDetails(taskListPosition: Int, cardPosition: Int){
-        val intent = Intent(this,CardDetailsActivity::class.java)
+    fun cardDetails(taskListPosition: Int, cardPosition: Int) {
+        val intent = Intent(this, CardDetailsActivity::class.java)
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
-        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailList)
-        startActivityForResult(intent,Constants.CARD_DETAIL_REQUEST_CODE)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST, mAssignedMemberDetailList)
+        startActivityForResult(intent, Constants.CARD_DETAIL_REQUEST_CODE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -82,7 +83,7 @@ class TaskListActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_members -> {
-                val intent = Intent(this,MembersActivity::class.java)
+                val intent = Intent(this, MembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
                 startActivityForResult(intent, Constants.MEMBER_REQUEST_CODE)
                 return true
@@ -163,7 +164,7 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
 
-    fun boardMembersDetailsList(list: ArrayList<User>){
+    fun boardMembersDetailsList(list: ArrayList<User>) {
         mAssignedMemberDetailList = list
         hideProgressDialog()
 
@@ -177,5 +178,16 @@ class TaskListActivity : BaseActivity() {
 
         val adapter = TaskListItemsAdapter(this, mBoardDetails.taskList)
         binding?.rvTaskList?.adapter = adapter
+    }
+
+    fun updateCardsInTaskList(taskListPosition: Int, cards: ArrayList<Card>) {
+
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+
+        mBoardDetails.taskList[taskListPosition].cards = cards
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 }
