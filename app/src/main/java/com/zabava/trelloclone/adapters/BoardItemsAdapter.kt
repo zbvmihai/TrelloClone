@@ -1,5 +1,6 @@
 package com.zabava.trelloclone.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,10 @@ import com.bumptech.glide.Glide
 import com.zabava.trelloclone.R
 import com.zabava.trelloclone.models.Board
 
-open class BoardItemsAdapter(private val context: Context,
-                             private val list: ArrayList<Board>):
+open class BoardItemsAdapter(
+    private val context: Context,
+    private val list: ArrayList<Board>
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -19,14 +22,18 @@ open class BoardItemsAdapter(private val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(
             LayoutInflater.from(context)
-                .inflate(R.layout.item_board,
+                .inflate(
+                    R.layout.item_board,
                     parent,
-                    false))
+                    false
+                )
+        )
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
-        if (holder is MyViewHolder){
+        if (holder is MyViewHolder) {
             Glide
                 .with(context)
                 .load(model.image)
@@ -36,21 +43,21 @@ open class BoardItemsAdapter(private val context: Context,
 
             holder.itemView.findViewById<TextView>(R.id.tv_board_name).text = model.name
             holder.itemView.findViewById<TextView>(R.id.tv_board_created_by)
-                .text ="Created by: ${model.createdBy}"
+                .text = "Created by: ${model.createdBy}"
 
-            holder.itemView.setOnClickListener{
-                if (onClickListener != null){
-                    onClickListener!!.onClick(position,model)
+            holder.itemView.setOnClickListener {
+                if (onClickListener != null) {
+                    onClickListener!!.onClick(position, model)
                 }
             }
         }
     }
 
-    interface OnClickListener{
-        fun onClick(position: Int,model: Board)
+    interface OnClickListener {
+        fun onClick(position: Int, model: Board)
     }
 
-    fun setOnClickListener(onClickListener: OnClickListener){
+    fun setOnClickListener(onClickListener: OnClickListener) {
         this.onClickListener = onClickListener
     }
 

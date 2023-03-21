@@ -110,7 +110,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/card_details_value_marginTop"
                     android:visibility="gone"
-                    tools:visibility="visible"/>
+                    tools:visibility="visible" />
 
                 <TextView
                     android:layout_width="match_parent"

@@ -28,11 +28,11 @@ class SignUpActivity : BaseActivity() {
         binding?.btnSignUp?.setOnClickListener { registerUser() }
     }
 
-    private fun setupActionBar(){
+    private fun setupActionBar() {
         setSupportActionBar(binding?.toolbarSignUpActivity)
 
         val actionBar = supportActionBar
-        if (actionBar != null){
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         }
@@ -40,58 +40,60 @@ class SignUpActivity : BaseActivity() {
     }
 
     @SuppressLint("RestrictedApi")
-    private fun registerUser(){
-        val name: String = binding?.etNameSignup?.text.toString().trim{it <= ' '}
-        val email: String = binding?.etEmailSignup?.text.toString().trim{it <= ' '}
-        val password: String = binding?.etPasswordSignup?.text.toString().trim{it <= ' '}
+    private fun registerUser() {
 
-        if (validateForm(name,email,password)){
+        val name: String = binding?.etNameSignup?.text.toString().trim { it <= ' ' }
+        val email: String = binding?.etEmailSignup?.text.toString().trim { it <= ' ' }
+        val password: String = binding?.etPasswordSignup?.text.toString().trim { it <= ' ' }
+
+        if (validateForm(name, email, password)) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener {
-                    task ->
-                if (task.isSuccessful) {
-                    hideProgressDialog()
-                    val firebaseUser: FirebaseUser = task.result!!.user!!
-                    val registeredEmail = firebaseUser.email!!
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        hideProgressDialog()
+                        val firebaseUser: FirebaseUser = task.result!!.user!!
+                        val registeredEmail = firebaseUser.email!!
 
-                    val user = User(
-                        firebaseUser.uid, name, registeredEmail
-                    )
-                    FirestoreClass().registerUser(this,user)
-                    finish()
-                } else {
-                    hideProgressDialog()
-                    Toast.makeText(
-                        this, "Registration failed",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        val user = User(
+                            firebaseUser.uid, name, registeredEmail
+                        )
+                        FirestoreClass().registerUser(this, user)
+                        finish()
+                    } else {
+                        hideProgressDialog()
+                        Toast.makeText(
+                            this, "Registration failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-            }
         }
     }
 
-    private fun validateForm(name:String,email:String,password:String): Boolean{
-        return when{
-            TextUtils.isEmpty(name)->{
+    private fun validateForm(name: String, email: String, password: String): Boolean {
+
+        return when {
+            TextUtils.isEmpty(name) -> {
                 showErrorSnackBar("Please enter a name!")
                 false
             }
-            TextUtils.isEmpty(email)->{
+            TextUtils.isEmpty(email) -> {
                 showErrorSnackBar("Please enter an email!")
                 false
             }
-            TextUtils.isEmpty(password)->{
+            TextUtils.isEmpty(password) -> {
                 showErrorSnackBar("Please enter a password!")
                 false
             }
-            else->{
+            else -> {
                 true
             }
-
         }
     }
 
-    fun userRegisteredSuccess(){
+    fun userRegisteredSuccess() {
+
         hideProgressDialog()
         Toast.makeText(
             this, "You have successfully registered!",

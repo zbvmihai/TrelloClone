@@ -84,7 +84,6 @@ class FirestoreClass {
                 Log.e(activity.javaClass.simpleName, "Error while creating a board", e)
 
             }
-
     }
 
     fun getBoardsList(activity: MainActivity) {
@@ -104,11 +103,11 @@ class FirestoreClass {
 
                 activity.hideProgressDialog()
                 Log.e(activity.javaClass.simpleName, "Error while creating a board", e)
-
             }
     }
 
     fun addUpdateTaskList(activity: Activity, board: Board) {
+
         val taskListHashMap = HashMap<String, Any>()
         taskListHashMap[Constants.TASK_LIST] = board.taskList
 
@@ -142,7 +141,7 @@ class FirestoreClass {
                 Log.e(activity.javaClass.simpleName, "Profile Data updated successfully!")
                 Toast.makeText(activity, "Profile Updated Successfully!", Toast.LENGTH_SHORT).show()
 
-                when(activity){
+                when (activity) {
                     is MainActivity -> {
                         activity.tokenUpdateSuccess()
                     }
@@ -150,10 +149,8 @@ class FirestoreClass {
                         activity.profileUpdateSuccess()
                     }
                 }
-
-
             }.addOnFailureListener { e ->
-                when(activity){
+                when (activity) {
                     is MainActivity -> {
                         activity.hideProgressDialog()
                     }
@@ -174,7 +171,7 @@ class FirestoreClass {
 
                 when (activity) {
                     is SignInActivity -> {
-                        activity.signInSuccess(loggedInUser!!)
+                        activity.signInSuccess()
                     }
                     is MainActivity -> {
                         activity.updateNavigationUserDetails(loggedInUser!!, readBoardsList)
@@ -210,6 +207,7 @@ class FirestoreClass {
     }
 
     fun getMemberDetails(activity: MembersActivity, email: String) {
+
         mFireStore.collection(Constants.USERS)
             .whereEqualTo(Constants.EMAIL, email)
             .get()

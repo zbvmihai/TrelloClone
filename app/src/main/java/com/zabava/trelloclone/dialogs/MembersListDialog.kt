@@ -39,13 +39,14 @@ abstract class MembersListDialog(
 
         if (list.size > 0) {
 
-            view.findViewById<RecyclerView>(R.id.rv_List).layoutManager = LinearLayoutManager(context)
+            view.findViewById<RecyclerView>(R.id.rv_List).layoutManager =
+                LinearLayoutManager(context)
             adapter = MembersAdapter(context, list)
             view.findViewById<RecyclerView>(R.id.rv_List).adapter = adapter
 
             adapter!!.setOnClickListener(object :
                 MembersAdapter.OnClickListener {
-                override fun onClick(position: Int, user: User, action:String) {
+                override fun onClick(position: Int, user: User, action: String) {
                     dismiss()
                     onItemSelected(user, action)
                 }
@@ -53,5 +54,5 @@ abstract class MembersListDialog(
         }
     }
 
-    protected abstract fun onItemSelected(user: User, action:String)
+    protected abstract fun onItemSelected(user: User, action: String)
 }

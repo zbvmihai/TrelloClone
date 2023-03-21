@@ -9,45 +9,51 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.zabava.trelloclone.R
 
-open class LabelColorAdapter (
+open class LabelColorAdapter(
     private val context: Context,
     private var list: ArrayList<String>,
     private val mSelectedColor: String
-): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return MyViewHolder(LayoutInflater.from(context)
-            .inflate(R.layout.item_label_color,parent,false))
+        return MyViewHolder(
+            LayoutInflater.from(context)
+                .inflate(R.layout.item_label_color, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         val item = list[holder.adapterPosition]
-        if (holder is MyViewHolder){
-            holder.itemView.findViewById<View>(R.id.color_view_main).setBackgroundColor(Color.parseColor(item))
-            if (item == mSelectedColor){
-                holder.itemView.findViewById<ImageView>(R.id.iv_color_selected_color).visibility = View.VISIBLE
-            }else{
-                holder.itemView.findViewById<ImageView>(R.id.iv_color_selected_color).visibility = View.GONE
+        if (holder is MyViewHolder) {
+            holder.itemView.findViewById<View>(R.id.color_view_main)
+                .setBackgroundColor(Color.parseColor(item))
+            if (item == mSelectedColor) {
+                holder.itemView.findViewById<ImageView>(R.id.iv_color_selected_color).visibility =
+                    View.VISIBLE
+            } else {
+                holder.itemView.findViewById<ImageView>(R.id.iv_color_selected_color).visibility =
+                    View.GONE
             }
 
             holder.itemView.setOnClickListener {
-                if (onItemClickListener != null){
-                    onItemClickListener!!.onClick(position,item)
+                if (onItemClickListener != null) {
+                    onItemClickListener!!.onClick(position, item)
                 }
             }
         }
     }
 
     override fun getItemCount(): Int {
-       return list.size
+        return list.size
     }
 
-    private class MyViewHolder(view: View): RecyclerView.ViewHolder(view)
+    private class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    interface  OnItemClickListener {
-        fun onClick(position: Int, color:String)
+    interface OnItemClickListener {
+        fun onClick(position: Int, color: String)
     }
-
 }

@@ -1,6 +1,5 @@
 package com.zabava.trelloclone.activities
 
-
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -27,7 +26,6 @@ class MyProfileActivity : BaseActivity() {
     private var mSelectedImageFileURI: Uri? = null
     private var mProfileImageURL: String = ""
     private lateinit var mUserDetails: User
-
     private var binding: ActivityMyProfileBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,10 +41,8 @@ class MyProfileActivity : BaseActivity() {
         binding?.ivUserProfileImage?.setOnClickListener {
 
             if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-                == PackageManager.PERMISSION_GRANTED
-            ) {
+                    this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED){
 
                 Constants.showImageChooser(this)
 
@@ -54,8 +50,7 @@ class MyProfileActivity : BaseActivity() {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    Constants.READ_STORAGE_PERMISSION_CODE
-                )
+                    Constants.READ_STORAGE_PERMISSION_CODE)
             }
         }
 
@@ -70,9 +65,11 @@ class MyProfileActivity : BaseActivity() {
     }
 
     override fun onRequestPermissionsResult(
+
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty()
@@ -92,8 +89,7 @@ class MyProfileActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK
             && requestCode == Constants.PICK_IMAGE_REQUEST_CODE
-            && data!!.data != null
-        ) {
+            && data!!.data != null) {
             mSelectedImageFileURI = data.data
 
             try {
@@ -110,6 +106,7 @@ class MyProfileActivity : BaseActivity() {
     }
 
     private fun setupActionBar() {
+
         setSupportActionBar(binding?.toolbarMyProfileActivity)
 
         val actionBar = supportActionBar
@@ -193,9 +190,7 @@ class MyProfileActivity : BaseActivity() {
                 Toast.makeText(
                     this@MyProfileActivity,
                     exception.message,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                    Toast.LENGTH_SHORT).show()
 
                 hideProgressDialog()
             }
@@ -203,6 +198,7 @@ class MyProfileActivity : BaseActivity() {
     }
 
     fun profileUpdateSuccess() {
+
         hideProgressDialog()
         setResult(Activity.RESULT_OK)
         finish()

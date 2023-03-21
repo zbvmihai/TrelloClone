@@ -19,10 +19,8 @@ import com.zabava.trelloclone.models.Task
 import java.util.*
 
 open class TaskListItemsAdapter(
-    private val context: Context,
-    private var list: ArrayList<Task>
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val context: Context, private var list: ArrayList<Task>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var mPositionDraggedFrom = -1
     private var mPositionDraggedTo = -1
@@ -30,8 +28,7 @@ open class TaskListItemsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_task, parent, false)
         val layoutParams = LinearLayout.LayoutParams(
-            (parent.width * 0.7).toInt(), LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            (parent.width * 0.7).toInt(), LinearLayout.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins((15.toDp().toPx()), 0, (40.toDp()).toPx(), 0)
         view.layoutParams = layoutParams
 
@@ -40,6 +37,7 @@ open class TaskListItemsAdapter(
 
     @SuppressLint("CutPasteId")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         val model = list[holder.adapterPosition]
         if (holder is MyViewHolder) {
             if (holder.adapterPosition == list.size - 1) {
@@ -96,8 +94,8 @@ open class TaskListItemsAdapter(
 
             holder.itemView.findViewById<ImageButton>(R.id.ib_done_edit_list_name)
                 .setOnClickListener {
-                    val listName = holder.itemView
-                        .findViewById<EditText>(R.id.et_edit_task_list_name).text.toString()
+                    val listName =
+                        holder.itemView.findViewById<EditText>(R.id.et_edit_task_list_name).text.toString()
 
                     if (listName.isNotEmpty()) {
                         if (context is TaskListActivity) {
@@ -124,8 +122,8 @@ open class TaskListItemsAdapter(
             }
 
             holder.itemView.findViewById<ImageButton>(R.id.ib_done_card_name).setOnClickListener {
-                val cardName = holder.itemView
-                    .findViewById<EditText>(R.id.et_card_name).text.toString()
+                val cardName =
+                    holder.itemView.findViewById<EditText>(R.id.et_card_name).text.toString()
 
                 if (cardName.isNotEmpty()) {
                     if (context is TaskListActivity) {
@@ -136,74 +134,65 @@ open class TaskListItemsAdapter(
                 }
             }
 
-            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list)
-                .layoutManager = LinearLayoutManager(context)
-            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list)
-                .setHasFixedSize(true)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).layoutManager =
+                LinearLayoutManager(context)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).setHasFixedSize(true)
             val adapter = CardListItemsAdapter(context, model.cards)
-            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list)
-                .adapter = adapter
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter = adapter
 
-            adapter.setOnClickListener(
-                object : CardListItemsAdapter.OnClickListener {
-                    override fun onClick(position: Int) {
+            adapter.setOnClickListener(object : CardListItemsAdapter.OnClickListener {
+                override fun onClick(position: Int) {
 
-                        if (context is TaskListActivity) {
-                            context.cardDetails(holder.adapterPosition, position)
-                        }
+                    if (context is TaskListActivity) {
+                        context.cardDetails(holder.adapterPosition, position)
                     }
                 }
-            )
+            })
 
             val dividerItemDecoration = DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
+                context, DividerItemDecoration.VERTICAL
             )
 
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list)
                 .addItemDecoration(dividerItemDecoration)
 
-            val helper = ItemTouchHelper(
-                object : ItemTouchHelper.SimpleCallback(
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
-                ) {
-                    override fun onMove(
-                        recyclerView: RecyclerView,
-                        dragged: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder
-                    ): Boolean {
-                        val draggedPosition = dragged.adapterPosition
-                        val targetPosition = target.adapterPosition
+            val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    dragged: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    val draggedPosition = dragged.adapterPosition
+                    val targetPosition = target.adapterPosition
 
-                        if (mPositionDraggedFrom == -1){
-                            mPositionDraggedFrom = draggedPosition
-                        }
-
-                        mPositionDraggedTo = targetPosition
-                        Collections.swap(list[holder.adapterPosition].cards,draggedPosition,targetPosition)
-                        adapter.notifyItemMoved(draggedPosition,targetPosition)
-                        return false
+                    if (mPositionDraggedFrom == -1) {
+                        mPositionDraggedFrom = draggedPosition
                     }
 
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
-
-                    override fun clearView(
-                        recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder
-                    ) {
-                        super.clearView(recyclerView, viewHolder)
-                        if (mPositionDraggedFrom != -1 &&
-                            mPositionDraggedTo != -1 &&
-                            mPositionDraggedFrom != mPositionDraggedTo){(context as TaskListActivity)
-                            .updateCardsInTaskList(
-                                holder.adapterPosition,
-                                list[holder.adapterPosition].cards)
-                        }
-                        mPositionDraggedFrom = -1
-                        mPositionDraggedTo = -1
-                    }
+                    mPositionDraggedTo = targetPosition
+                    Collections.swap(
+                        list[holder.adapterPosition].cards, draggedPosition, targetPosition
+                    )
+                    adapter.notifyItemMoved(draggedPosition, targetPosition)
+                    return false
                 }
-            )
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+                override fun clearView(
+                    recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder
+                ) {
+                    super.clearView(recyclerView, viewHolder)
+                    if (mPositionDraggedFrom != -1 && mPositionDraggedTo != -1 && mPositionDraggedFrom != mPositionDraggedTo) {
+                        (context as TaskListActivity).updateCardsInTaskList(
+                                holder.adapterPosition, list[holder.adapterPosition].cards
+                            )
+                    }
+                    mPositionDraggedFrom = -1
+                    mPositionDraggedTo = -1
+                }
+            })
             helper.attachToRecyclerView(holder.itemView.findViewById(R.id.rv_card_list))
         }
     }
