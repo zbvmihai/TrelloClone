@@ -2,6 +2,7 @@ package com.zabava.trelloclone.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
@@ -17,6 +18,9 @@ import com.zabava.trelloclone.dialogs.MembersListDialog
 import com.zabava.trelloclone.firebase.FirestoreClass
 import com.zabava.trelloclone.models.*
 import com.zabava.trelloclone.utils.Constants
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class CardDetailsActivity : BaseActivity() {
@@ -26,6 +30,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mCardPosition = -1
 
     private var mSelectedColor = ""
+    private var mSelectedViewDateMilliSeconds: Long = 0
 
     private lateinit var mMembersDetailList: ArrayList<User>
 
@@ -64,6 +69,20 @@ class CardDetailsActivity : BaseActivity() {
         }
 
         setupSelectedMembersList()
+
+        mSelectedViewDateMilliSeconds =
+            mBoardDetails.taskList[mTaskListPosition]
+                .cards[mCardPosition].dueDate
+
+        if (mSelectedViewDateMilliSeconds > 0){
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val selectedDate = simpleDateFormat.format(mSelectedViewDateMilliSeconds)
+            binding?.tvSelectDueDate?.text = selectedDate
+        }
+
+        binding?.tvSelectDueDate?.setOnClickListener {
+            showDatePicker()
+        }
     }
 
     private fun setupActionBar() {
@@ -201,7 +220,7 @@ class CardDetailsActivity : BaseActivity() {
             binding?.etNameCardDetails?.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo,
-            mSelectedColor
+            mSelectedColor,mSelectedViewDateMilliSeconds
         )
 
         val taskList: ArrayList<Task> = mBoardDetails.taskList
@@ -288,5 +307,24 @@ class CardDetailsActivity : BaseActivity() {
             binding?.tvSelectMembers?.visibility = View.VISIBLE
             binding?.rvSelectedMembersList?.visibility = View.GONE
         }
+    }
+
+    private fun showDatePicker(){
+
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val dpd = DatePickerDialog(this, { _, mYear, mMonth, mDay ->
+            val sDayOfMonth = if (mDay<10) "0$mDay" else "$mDay"
+            val sMonthOfYear = if((mMonth+1)<10) "0${mMonth+1}" else "${mMonth+1}"
+            val selectedDate = "$sDayOfMonth/$sMonthOfYear/$mYear"
+            binding?.tvSelectDueDate?.text = selectedDate
+
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val theDate = sdf.parse(selectedDate)
+            mSelectedViewDateMilliSeconds = theDate!!.time
+        },year,month,day)
+        dpd.show()
     }
 }
