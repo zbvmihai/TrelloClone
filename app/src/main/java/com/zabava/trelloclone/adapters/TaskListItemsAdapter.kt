@@ -212,7 +212,6 @@ open class TaskListItemsAdapter(
         return list.size
     }
 
-
     private fun alertDialogForDeleteList(position: Int, title: String) {
         val builder = AlertDialog.Builder(context)
 
